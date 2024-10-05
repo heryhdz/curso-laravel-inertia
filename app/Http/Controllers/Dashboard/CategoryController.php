@@ -23,8 +23,8 @@ class CategoryController extends Controller
 
     public function store(Store $request)
     {
-        sleep(5);
         Category::create($request->validated());
+        return to_route('category.index')->with('message', "Create category successfully");
     }
 
     public function edit(Category $category){
@@ -34,10 +34,12 @@ class CategoryController extends Controller
     public function update(Put $request, Category $category)
     {
         $category->update($request->validated());
+        return redirect()->route('category.index')->with('message', "Updated category successfully");
     }
 
-    public function destroy(Category $category){
-
+    public function destroy(Category $category)
+    {
         $category->delete();
+        return to_route('category.index')->with('message', "Updated category successfully");
     }
 }
