@@ -36,4 +36,5 @@ Route::group(['middleware' => [
     'verified',
 ]],function (){
     Route::resource('/category', CategoryController::class);
+    Route::resource('/post', PostController::class);
 });
