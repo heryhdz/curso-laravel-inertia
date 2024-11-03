@@ -8,12 +8,16 @@
     import InputLabel from '@/Components/InputLabel.vue';
     import TextInput from '@/Components/TextInput.vue';
     import PrimaryButton from '@/Components/PrimaryButton.vue';
+    import DangerButton from '@/Components/DangerButton.vue';
+    import { ref, watch } from 'vue';
 
     const props = defineProps({
         errors: Object,
         post: Object,
-        categories: Object
+        categories: Object,
     })
+
+    const dropFiles = ref([]);
 
     const form = useForm({
         id: props.post.id,
@@ -29,12 +33,25 @@
     })
 
     function submit(){
-        Inertia.put(route('post.update',form.id),form)
+        if(form.id == "") Inertia.post(route("post.store"),form)
+        else Inertia.post(route("post.update", form.id), {
+            _method: 'put',
+            title: form.title,
+            date: form.date,
+            description: form.description,
+            text: form.text,
+            type: form.type,
+            posted: form.posted,
+            category_id: form.category_id,
+            image: form.image,
+        })
     }
 
-    function upload(){
-        Inertia.post(route('post.upload', form.id),form)
-    }
+    watch(() => dropFiles, (currentValue, oldValue) => {
+        router.post(route("post.upload",props.post.id),{
+            "image": currentValue.value[currentValue.value.length -1]
+        });
+    });
 </script>
 
 <template>
@@ -113,6 +130,38 @@
                     <InputError :message="errors.category_id"/>
                     
                 </div>
+                <div class="col-span-6">
+                    <InputLabel for="">Image</InputLabel>
+                    <InputError :message="errors.image"/>
+                    <TextInput class="w-full mt-1" type="file" @input="form.image = $event.target.files[0]" v-model="form.image"/>
+                </div>
+
+                <div class="col-span-6">
+                    <InputLabel for="">Image</InputLabel>
+                    <o-upload override v-slot="{ onclick }" v-model="image">
+                        <o-button
+                            override 
+                            tag="button" variant="primary" 
+                            @click="onclick"
+                            :class="['bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded']"
+                        >
+                            <o-icon icon="upload" />
+                            <span>Click to upload</span>
+                        </o-button>
+                    </o-upload>
+                    <InputError :message="errors.image"/>
+                </div>
+
+                <div class="col-span-6" v-if="post.id">
+                    <o-upload v-model="dropFiles" multiple drag-drop>
+                        <section class="ex-center">
+                            <p>
+                                <o-icon icon="upload" size="is-large" />
+                            </p>
+                            <p>Drop your files here or click to upload</p>
+                        </section>
+                    </o-upload>
+                </div>
             </template>
             <template #actions>
                 <PrimaryButton class="mt-1" type="submit">
@@ -121,27 +170,21 @@
             </template>
         </FormSection>
 
-        <div class="container">
+        <div class="container mb-4" v-if="post.image">
             <div class="card">
                 <div class="card-body">
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <InputLabel for="">Image</InputLabel>
-                            <InputError :message="errors.image"/>
-                            <TextInput class="w-full mt-1" type="file" @input="form.image = $event.target.files[0]" v-model="form.image"/>
-                        </div>
-                        <div>
-                            <PrimaryButton class="mt-3" @click="upload">
-                                Send
-                            </PrimaryButton>
-                        </div>
-                    </div>
+                    <img class="max-w-xs rounded-md shadow-md" :src="'/image/post/' + post.image" alt="">
+
+                    <DangerButton class="mt-4" @click="Inertia.delete(route('post.image-delete',form.id))">Delete</DangerButton>
+                    <a :href="'/image/post/' + post.image" download="" class="ml-2 mt-4 link-button-default">Descargar</a>
                 </div>
             </div>
         </div>
     </AppLayout>
 </template>
 
-<style lang="scss" scoped>
-
+<style>
+    input[data-oruga-input="file"] {
+        display: none !important;
+    }
 </style>

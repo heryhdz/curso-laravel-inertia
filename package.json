@@ -19,6 +19,8 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
-        "@inertiajs/inertia": "^0.11.1"
+        "@inertiajs/inertia": "^0.11.1",
+        "@oruga-ui/oruga-next": "^0.9.0-pre.1",
+        "@oruga-ui/theme-oruga": "^0.4.2"
     }
 }

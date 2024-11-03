@@ -36,6 +36,11 @@ return [
             'throw' => false,
         ],
 
+        'public_upload' => [
+            'driver' => 'local',
+            'root' => public_path(''),
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),
@@ -55,6 +60,8 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+
+
 
     ],
 
