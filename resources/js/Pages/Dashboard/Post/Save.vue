@@ -11,13 +11,27 @@
     import DangerButton from '@/Components/DangerButton.vue';
     import { ref, watch } from 'vue';
 
+    //Ckeditor
+    import { ClassicEditor, Bold, Essentials, Italic, Mention, Paragraph, Undo, Link, FontFamily, FontSize, List } from 'ckeditor5';
+    import { Ckeditor } from '@ckeditor/ckeditor5-vue';
+    import 'ckeditor5/ckeditor5.css';
+
     const props = defineProps({
         errors: Object,
         post: Object,
         categories: Object,
     })
 
-    const dropFiles = ref([]);
+    const dropFiles = ref([])
+
+    const editor = ref(ClassicEditor);
+    const editorData = ref('<p>Hello from CKEditor 5 in Vue!</p>');
+    const editorConfig = ref({
+      plugins: [Bold, Essentials, Italic, Mention, Paragraph, Undo, Link, FontFamily, FontSize],
+      toolbar: ['undo', 'redo', '|', 'bold', 'italic', '|','link','|', 'fontFamily', 'fontSize'],
+      licenseKey: '<YOUR_LICENSE_KEY>',
+      // Otras opciones de configuración...
+    });
 
     const form = useForm({
         id: props.post.id,
@@ -91,7 +105,12 @@
                 <div class="col-span-6">
                     <InputLabel for="">Decription</InputLabel>
                     <InputError :message="errors.description"/>
-                    <textarea class="rounded-md w-full border-gray-300" v-model="form.description"></textarea>
+                    <!-- <textarea class="rounded-md w-full border-gray-300" v-model="form.description"></textarea> -->
+                    <ckeditor
+                        v-model="form.description"
+                        :editor="editor"
+                        :config="editorConfig"
+                    />
                 </div>
 
                 <div class="col-span-6">
@@ -130,15 +149,16 @@
                     <InputError :message="errors.category_id"/>
                     
                 </div>
-                <div class="col-span-6">
+
+                <!-- <div class="col-span-6">
                     <InputLabel for="">Image</InputLabel>
                     <InputError :message="errors.image"/>
                     <TextInput class="w-full mt-1" type="file" @input="form.image = $event.target.files[0]" v-model="form.image"/>
-                </div>
+                </div> -->
 
                 <div class="col-span-6">
                     <InputLabel for="">Image</InputLabel>
-                    <o-upload override v-slot="{ onclick }" v-model="image">
+                    <o-upload override v-slot="{ onclick }" @input="form.image = $event.target.files[0]" v-model="form.image">
                         <o-button
                             override 
                             tag="button" variant="primary" 
@@ -152,8 +172,9 @@
                     <InputError :message="errors.image"/>
                 </div>
 
-                <div class="col-span-6" v-if="post.id">
-                    <o-upload v-model="dropFiles" multiple drag-drop>
+                <!-- <div class="col-span-6" v-if="post.id">
+                    <InputError :message="errors.image"/>
+                    <o-upload @input="form.image = $event.target.files[0]" v-model="form.image" multiple drag-drop>
                         <section class="ex-center">
                             <p>
                                 <o-icon icon="upload" size="is-large" />
@@ -161,7 +182,7 @@
                             <p>Drop your files here or click to upload</p>
                         </section>
                     </o-upload>
-                </div>
+                </div> -->
             </template>
             <template #actions>
                 <PrimaryButton class="mt-1" type="submit">

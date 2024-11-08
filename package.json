@@ -19,8 +19,11 @@
         "vue": "^3.3.13"
     },
     "dependencies": {
+        "@ckeditor/ckeditor5-vue": "^7.2.0",
         "@inertiajs/inertia": "^0.11.1",
         "@oruga-ui/oruga-next": "^0.9.0-pre.1",
-        "@oruga-ui/theme-oruga": "^0.4.2"
+        "@oruga-ui/theme-oruga": "^0.4.2",
+        "ckeditor5": "^43.3.0",
+        "ckeditor5-premium-features": "^43.3.0"
     }
 }
